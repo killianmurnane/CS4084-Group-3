@@ -17,4 +17,13 @@
     <string name="nav_home">Home</string>
     <string name="nav_workouts">Workouts</string>
     <string name="nav_progress">Progress</string>
+    <string name="profile_image_desc">Profile Image</string>
+    <string name="profile_name_default">John Doe</string>
+    <string name="profile_email_default">john@example.com</string>
+    <string name="favorite_workouts_title">Favorite Workouts</string>
+    <string name="favorite_workouts_content">Chest, Legs, Cardio</string>
+    <string name="prs_title">PRs</string>
+    <string name="prs_content">Bench Press: 100kg\nSquat: 120kg</string>
+    <string name="goals_title">Goals</string>
+    <string name="goals_content">Run 5km in 25 min\nLose 2kg this month</string>
 </resources>
