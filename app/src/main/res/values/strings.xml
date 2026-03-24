@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">CS4084-Group-3</string>
+    <string name="app_name">Workout Tracker</string>
+    <string name="workout_app_title">Workout Tracker</string>
+    <string name="top_app_bar_subtitle">Build consistency daily</string>
+    <string name="workout_logo_content_description">Workout Tracker logo</string>
+    <string name="intro_heading">Your Workout Tracker</string>
+    <string name="intro_subheading">Train smarter. Recover better. Stay consistent.</string>
+    <string name="features_title">Core Features</string>
+    <string name="feature_one_title">Guided Workout Plans</string>
+    <string name="feature_one_body">Choose structured routines for strength, cardio, or mobility based on your goals.</string>
+    <string name="feature_two_title">Progress Tracking</string>
+    <string name="feature_two_body">Log sessions and monitor consistency, personal bests, and weekly momentum.</string>
+    <string name="feature_three_title">Recovery &amp; Balance</string>
+    <string name="feature_three_body">Build healthier habits with scheduled rest, hydration reminders, and active recovery prompts.</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_settings">Settings</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_workouts">Workouts</string>
+    <string name="nav_progress">Progress</string>
 </resources>
