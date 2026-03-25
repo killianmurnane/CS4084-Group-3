@@ -17,6 +17,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_workouts">Workouts</string>
     <string name="nav_progress">Progress</string>
+    <!-- Profile page -->
     <string name="profile_image_desc">Profile Image</string>
     <string name="profile_name_default">John Doe</string>
     <string name="profile_email_default">john@example.com</string>
@@ -26,4 +27,50 @@
     <string name="prs_content">Bench Press: 100kg\nSquat: 120kg</string>
     <string name="goals_title">Goals</string>
     <string name="goals_content">Run 5km in 25 min\nLose 2kg this month</string>
+    <!-- Active workout screen -->
+    <string name="active_workout_elapsed">ELAPSED TIME</string>
+    <string name="active_workout_exercises">Exercises</string>
+    <string name="btn_start_timer">Start</string>
+    <string name="btn_pause_timer">Pause</string>
+    <string name="btn_resume_timer">Resume</string>
+    <string name="btn_reset_timer">Reset</string>
+    <string name="btn_finish_workout">Finish Workout</string>
+    <!-- Workouts page -->
+    <string name="workouts_my_title">My Workouts</string>
+    <string name="workout_item_one_title">Full Body Strength</string>
+    <string name="workout_item_one_meta">45 min · 8 exercises · Intermediate</string>
+    <string name="workout_item_two_title">Morning Cardio Blast</string>
+    <string name="workout_item_two_meta">30 min · 6 exercises · Beginner</string>
+    <string name="workouts_browse_title">Browse Plans</string>
+    <string name="plan_strength_title">Strength Training</string>
+    <string name="plan_strength_meta">Build muscle · 3–4 days/week</string>
+    <string name="plan_cardio_title">Cardio &amp; Endurance</string>
+    <string name="plan_cardio_meta">Burn calories · 4–5 days/week</string>
+    <string name="plan_mobility_title">Mobility &amp; Flexibility</string>
+    <string name="plan_mobility_meta">Move better · 2–3 days/week</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_view">View</string>
+    <string name="fab_add_workout">Add Workout</string>
+    <string name="fab_add_workout_hint">Create a new workout</string>
+    <!-- Progress page -->
+    <string name="progress_this_week">This Week</string>
+    <string name="progress_sessions_count">3</string>
+    <string name="progress_sessions_label">Sessions</string>
+    <string name="progress_minutes_count">120</string>
+    <string name="progress_minutes_label">Minutes</string>
+    <string name="progress_personal_bests">Personal Bests</string>
+    <string name="pb_squat_label">Squat</string>
+    <string name="pb_squat_value">100 kg</string>
+    <string name="pb_bench_label">Bench Press</string>
+    <string name="pb_bench_value">80 kg</string>
+    <string name="pb_run_label">5 km Run</string>
+    <string name="pb_run_value">24:32</string>
+    <!-- Create Workout Dialog -->
+    <string name="dialog_create_workout_title">Create New Workout</string>
+    <string name="dialog_workout_name_hint">Workout name</string>
+    <string name="dialog_workout_duration_hint">Duration (minutes)</string>
+    <string name="dialog_workout_description_hint">Description</string>
+    <string name="dialog_workout_level_label">Difficulty Level</string>
+    <string name="btn_create_workout">Create Workout</string>
+    <string name="btn_cancel">Cancel</string>
 </resources>

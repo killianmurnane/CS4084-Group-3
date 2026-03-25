@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,21 +34,12 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
+
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                showToast(getString(R.string.nav_home));
-                return true;
-            } else if (id == R.id.nav_workouts) {
-                showToast(getString(R.string.nav_workouts));
-                return true;
-            } else if (id == R.id.nav_progress) {
-                showToast(getString(R.string.nav_progress));
-                return true;
-            }
-            return false;
-        });
+        NavigationUI.setupWithNavController(bottomNav, navController);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -66,16 +60,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_profile) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
-            showToast(getString(R.string.menu_profile));
             return true;
         } else if (id == R.id.action_settings) {
-            showToast(getString(R.string.menu_settings));
+            Toast.makeText(this, getString(R.string.menu_settings), Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
