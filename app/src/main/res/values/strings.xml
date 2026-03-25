@@ -17,6 +17,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_workouts">Workouts</string>
     <string name="nav_progress">Progress</string>
+    <string name="nav_profile">Profile</string>
     <!-- Profile page -->
     <string name="profile_image_desc">Profile Image</string>
     <string name="profile_name_default">John Doe</string>
