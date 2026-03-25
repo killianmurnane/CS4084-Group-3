@@ -1,0 +1,50 @@
+package com.example.cs4084_group_3;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RoutineManager{
+
+    private List<Routine> allRoutines;
+
+    public RoutineManager() {
+        allRoutines = new ArrayList<>();
+//creates the routine and adds exercises and sets, adds routine to the list of all routines
+        Routine push = new Routine("Push");
+        push.addExercise("Bench Press",3);
+        push.addExercise("Shoulder Dumbbell Press",3);
+        allRoutines.add(push);
+
+        Routine pull = new Routine("Pull");
+        pull.addExercise("Pull-ups",3);
+        pull.addExercise("Barbell Rows",3);
+        allRoutines.add(pull);
+
+        Routine legs = new Routine("Legs");
+        legs.addExercise("Squats",3);
+        legs.addExercise("Deadlifts",3);
+        allRoutines.add(legs);
+
+        Routine fullBody = new Routine("Full Body");
+        fullBody.addExercise("Bench Press",3);
+        fullBody.addExercise("Pull-ups",3);
+        fullBody.addExercise("Squats",3);
+        allRoutines.add(fullBody);
+
+        Routine chestAndBack = new Routine("Chest and Back");
+        chestAndBack.addExercise("Bench Press",3);
+        chestAndBack.addExercise("Pull-ups",3);
+        allRoutines.add(chestAndBack);
+
+        Routine shoulderAndArms = new Routine("Shoulder and Arms");
+        shoulderAndArms.addExercise("Shoulder Dumbbell Press",3);
+        shoulderAndArms.addExercise("Preacher Curls",3);
+        shoulderAndArms.addExercise("Pushdowns",3);
+        allRoutines.add(shoulderAndArms);
+
+    }
+
+    
+
+
+}

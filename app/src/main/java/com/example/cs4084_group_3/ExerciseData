@@ -1,0 +1,32 @@
+package com.example.cs4084_group_3;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ExerciseData extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_exercise_data);
+    }
+
+
+
+    enum MuscleGroup {
+        Chest, Back, Legs, Biceps, Triceps, Shoulders, Core
+    }
+
+    public static class Exercises {
+        public Map<MuscleGroup, List<String>> exerciseMap = new EnumMap<>(MuscleGroup.class);
+
+        public Exercises() {
+            exerciseMap.put(MuscleGroup.Chest, Arrays.asList("Bench Press", "Incline Bench Press", "Chest Fly", "Incline dumbbell press"));
+            exerciseMap.put(MuscleGroup.Back, Arrays.asList("Pull-ups", "Chin Ups", "Lat Pulldown", "Barbell Row", "Dumbbell Row", "Machine Row"));
+            exerciseMap.put(MuscleGroup.Legs, Arrays.asList("Squats", "Lunges", "Leg Press", "Leg Curls", "Calf Raises", "Deadlifts", "Leg Extensions", "Adductor Machine", "Abductor Machine"));
+            exerciseMap.put(MuscleGroup.Biceps, Arrays.asList("Barbell Curl", "Dumbbell Curl", "Hammer Curl", "Preacher Curl"));
+            exerciseMap.put(MuscleGroup.Triceps, Arrays.asList("Dips", "Pushdowns", "Overhead Extensions", "JM Press"));
+            exerciseMap.put(MuscleGroup.Shoulders, Arrays.asList("Shoulder Dumbbell Press", "Lateral Raises", "Front Raises", "Reverse Fly"));
+            exerciseMap.put(MuscleGroup.Core, Arrays.asList("Crunch Machine", "Leg Raises", "Crunches"));
+        }
+    }
