@@ -1,20 +1,21 @@
 package com.example.cs4084_group_3;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Exercise class - represents an individual exercise within a workout
  */
 public class WorkoutExercise {
     private String name;
-    private int sets;
-    private int reps;
+    private List<ExerciseSet> sets;
 
-    public WorkoutExercise() {
-    }
 
-    public WorkoutExercise(String name, int sets, int reps) {
+    public WorkoutExercise(String name) {
         this.name = name;
-        this.sets = sets;
-        this.reps = reps;
+        this.sets = new ArrayList<>();
+
+
     }
 
     public void setName(String newName) {
@@ -25,19 +26,32 @@ public class WorkoutExercise {
         return this.name;
     }
 
-    public void setSets(int newSets) {
-        this.sets = newSets;
+    //adding a new set with weight and reps
+    public void addSet(double weight, int reps) {
+        sets.add(new ExerciseSet(weight, reps));
     }
 
-    public int getSets() {
-        return this.sets;
+    public void addSet(ExerciseSet set) {
+        sets.add(set);
     }
 
-    public void setReps(int newReps) {
-        this.reps = newReps;
+    public void removeSet(int index) {
+        if (index >= 0 && index < sets.size()) {
+            sets.remove(index);
+        }
     }
 
-    public int getReps() {
-        return this.reps;
+    public ExerciseSet getSet(int index) {
+        return sets.get(index);
     }
+
+    public List<ExerciseSet> getSets() {
+        return sets;
+    }
+
+
+
+
 }
+
+
