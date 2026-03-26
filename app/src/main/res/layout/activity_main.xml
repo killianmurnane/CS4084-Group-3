@@ -2,21 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    tools:context=".MainActivity">
+    android:background="?android:attr/colorBackground">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBar"
         style="@style/Widget.CS4084Group3.TopAppBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:title=""
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/top_app_bar_menu">
 
@@ -28,9 +25,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/workout_logo_content_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/workout_tracker"
-            tools:layout_editor_absoluteX="126dp"
-            tools:layout_editor_absoluteY="14dp" />
+            android:src="@drawable/workout_tracker"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.fragment.app.FragmentContainerView
@@ -39,20 +34,19 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:navGraph="@navigation/nav_graph"
         app:layout_constraintTop_toBottomOf="@id/topAppBar"
-        app:navGraph="@navigation/nav_graph" />
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         style="@style/Widget.CS4084Group3.BottomNav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
-
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

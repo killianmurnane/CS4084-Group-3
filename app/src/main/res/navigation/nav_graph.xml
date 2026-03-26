@@ -13,13 +13,10 @@
         android:id="@+id/nav_workouts"
         android:name="com.example.cs4084_group_3.WorkoutsFragment"
         android:label="Workouts">
+        <!-- Add this action so WorkoutsFragment can navigate -->
         <action
             android:id="@+id/action_workouts_to_activeWorkout"
-            app:destination="@id/activeWorkout"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:destination="@id/activeWorkout" />
     </fragment>
 
     <fragment
@@ -36,5 +33,10 @@
         android:id="@+id/nav_progress"
         android:name="com.example.cs4084_group_3.ProgressFragment"
         android:label="Progress" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.cs4084_group_3.ProfileFragment"
+        android:label="Profile" />
 
 </navigation>
