@@ -1,13 +1,12 @@
 package com.example.cs4084_group_3;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,18 +14,20 @@ import androidx.fragment.app.Fragment;
 
 public class ProfileFragment extends Fragment {
 
-    private EditText inputWorkoutSplit, inputPRs, inputGoals, inputCurrentGym, inputBodyweight, inputNationality;
+    private EditText inputWorkoutSplit, inputPRs, inputGoals,
+            inputCurrentGym, inputBodyweight, inputNationality;
     private Button btnSave;
 
-    private static final String PREFS_NAME = "ProfilePrefs";
+    public ProfileFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Find all EditTexts
         inputWorkoutSplit = view.findViewById(R.id.inputWorkoutSplit);
         inputPRs = view.findViewById(R.id.inputPRs);
         inputGoals = view.findViewById(R.id.inputGoals);
@@ -36,37 +37,38 @@ public class ProfileFragment extends Fragment {
 
         btnSave = view.findViewById(R.id.btnSaveProfile);
 
-        // Load saved values
         loadProfileData();
 
-        // Save button click listener
         btnSave.setOnClickListener(v -> saveProfileData());
 
         return view;
     }
 
-    private void loadProfileData() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    private void saveProfileData() {
+        Profile profile = new Profile();
 
-        inputWorkoutSplit.setText(prefs.getString("workoutSplit", ""));
-        inputPRs.setText(prefs.getString("PRs", ""));
-        inputGoals.setText(prefs.getString("goals", ""));
-        inputCurrentGym.setText(prefs.getString("currentGym", ""));
-        inputBodyweight.setText(prefs.getString("bodyweight", ""));
-        inputNationality.setText(prefs.getString("nationality", ""));
+        profile.workoutSplit = inputWorkoutSplit.getText().toString();
+        profile.PRs = inputPRs.getText().toString();
+        profile.goals = inputGoals.getText().toString();
+        profile.currentGym = inputCurrentGym.getText().toString();
+        profile.bodyweight = inputBodyweight.getText().toString();
+        profile.nationality = inputNationality.getText().toString();
+
+        ProfileStore.writeProfile(requireContext(), profile);
+
+        Toast.makeText(getContext(), "Profile saved!", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveProfileData() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+    private void loadProfileData() {
+        Profile profile = ProfileStore.readProfile(requireContext());
 
-        editor.putString("workoutSplit", inputWorkoutSplit.getText().toString());
-        editor.putString("PRs", inputPRs.getText().toString());
-        editor.putString("goals", inputGoals.getText().toString());
-        editor.putString("currentGym", inputCurrentGym.getText().toString());
-        editor.putString("bodyweight", inputBodyweight.getText().toString());
-        editor.putString("nationality", inputNationality.getText().toString());
-
-        editor.apply(); // Save asynchronously
+        if (profile != null) {
+            inputWorkoutSplit.setText(profile.workoutSplit);
+            inputPRs.setText(profile.PRs);
+            inputGoals.setText(profile.goals);
+            inputCurrentGym.setText(profile.currentGym);
+            inputBodyweight.setText(profile.bodyweight);
+            inputNationality.setText(profile.nationality);
+        }
     }
 }
