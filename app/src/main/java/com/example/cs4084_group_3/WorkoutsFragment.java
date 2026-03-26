@@ -101,7 +101,7 @@ public class WorkoutsFragment extends Fragment implements WorkoutCreateDialog.On
         textCol.addView(tvName);
 
         TextView tvMeta = new TextView(requireContext());
-        tvMeta.setText(String.format("%.1f min - %s", workout.getDuration(), workout.getLevel()));
+        tvMeta.setText(String.format("%.1f min", workout.getDuration()));
         tvMeta.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
         tvMeta.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_onSurfaceVariant));
         LinearLayout.LayoutParams metaParams = new LinearLayout.LayoutParams(

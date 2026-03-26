@@ -23,7 +23,6 @@ public class WorkoutCreateDialog extends DialogFragment {
     private TextInputEditText etWorkoutName;
     private TextInputEditText etDuration;
     private TextInputEditText etDescription;
-    private Spinner spinnerLevel;
     private MaterialButton btnCreate;
     private MaterialButton btnCancel;
 
@@ -61,34 +60,22 @@ public class WorkoutCreateDialog extends DialogFragment {
         etWorkoutName = view.findViewById(R.id.etWorkoutName);
         etDuration = view.findViewById(R.id.etDuration);
         etDescription = view.findViewById(R.id.etDescription);
-        spinnerLevel = view.findViewById(R.id.spinnerLevel);
         btnCreate = view.findViewById(R.id.btnCreateWorkout);
         btnCancel = view.findViewById(R.id.btnCancelWorkout);
 
-        // Setup difficulty level spinner
-        setupLevelSpinner();
 
         // Button listeners
         btnCancel.setOnClickListener(v -> dismiss());
         btnCreate.setOnClickListener(v -> createWorkout());
     }
 
-    private void setupLevelSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                new String[]{"Beginner", "Intermediate", "Advanced"}
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLevel.setAdapter(adapter);
-    }
+
 
     private void createWorkout() {
         // Validate inputs
         String name = etWorkoutName.getText().toString().trim();
         String durationStr = etDuration.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
-        String level = (String) spinnerLevel.getSelectedItem();
 
         if (name.isEmpty()) {
             Toast.makeText(requireContext(), "Please enter a workout name", Toast.LENGTH_SHORT).show();
@@ -114,18 +101,7 @@ public class WorkoutCreateDialog extends DialogFragment {
             workout.setDuration(duration);
             workout.setDescription(description);
 
-            // Set level based on spinner selection
-            switch (level) {
-                case "Beginner":
-                    workout.setLevel(Workout.WorkoutLevel.BEGINNER);
-                    break;
-                case "Intermediate":
-                    workout.setLevel(Workout.WorkoutLevel.INTERMEDIATE);
-                    break;
-                case "Advanced":
-                    workout.setLevel(Workout.WorkoutLevel.ADVANCED);
-                    break;
-            }
+
 
             // Initialize empty exercises array (already done in Workout constructor)
 
