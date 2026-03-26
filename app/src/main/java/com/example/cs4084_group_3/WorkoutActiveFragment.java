@@ -20,6 +20,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.List;
 
 public class WorkoutActiveFragment extends Fragment {
 
@@ -75,9 +76,8 @@ public class WorkoutActiveFragment extends Fragment {
         // Populate workout info from loaded workout
         if (currentWorkout != null) {
             tvName.setText(currentWorkout.getName());
-            tvMeta.setText(String.format("%.1f min - %s", 
-                    currentWorkout.getDuration(), 
-                    currentWorkout.getLevel()));
+            tvMeta.setText(String.format("%.1f min",
+                    currentWorkout.getDuration()));
             tvDesc.setText(currentWorkout.getDescription());
             
             // Initialize timer with workout duration (convert minutes to seconds)
@@ -86,7 +86,7 @@ public class WorkoutActiveFragment extends Fragment {
             updateTimerDisplay();
             
             // Build exercise cards from the workout's exercises
-            if (currentWorkout.getExercises() != null && currentWorkout.getExercises().length > 0) {
+            if (currentWorkout.getExercises() != null && !currentWorkout.getExercises().isEmpty()) {
                 buildExerciseCards(exercisesContainer, currentWorkout.getExercises());
             }
         }
@@ -162,12 +162,12 @@ public class WorkoutActiveFragment extends Fragment {
         tvTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
 
-    private void buildExerciseCards(LinearLayout container, WorkoutExercise[] exercises) {
+    private void buildExerciseCards(LinearLayout container, List<WorkoutExercise> exercises) {
         int sidePad   = dpToPx(16);
         int topMargin = dpToPx(12);
 
-        for (int i = 0; i < exercises.length; i++) {
-            WorkoutExercise exercise = exercises[i];
+        for (int i = 0; i < exercises.size(); i++) {
+            WorkoutExercise exercise = exercises.get(i);
             MaterialCardView card = new MaterialCardView(requireContext());
             LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -206,7 +206,7 @@ public class WorkoutActiveFragment extends Fragment {
             tvExName.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_onSurface));
 
             TextView tvExSets = new TextView(requireContext());
-            tvExSets.setText(String.format("%d sets × %d reps", exercise.getSets(), exercise.getReps()));
+            tvExSets.setText(String.format("%d sets", exercise.getSets().size()));
             tvExSets.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
             tvExSets.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_onSurfaceVariant));
 
