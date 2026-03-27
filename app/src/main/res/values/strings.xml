@@ -84,4 +84,6 @@
     <string name="exercise_subhead">Exercise</string>
     <string name="btn_add">Add</string>
 
+    <string name="nationality">Nationality</string>
+    <string name="workout_split">Workout Split</string>
 </resources>

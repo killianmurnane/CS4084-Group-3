@@ -5,7 +5,6 @@
     android:id="@+id/profileScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     android:fillViewport="true"
     android:padding="16dp">
 
@@ -14,14 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Profile Card: Image + Name/Email -->
+        <!-- PROFILE CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
+            android:layout_marginBottom="16dp"
             android:padding="16dp"
-            android:layout_marginBottom="16dp">
+            app:cardCornerRadius="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -29,149 +28,199 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:id="@+id/profileImage"
+                <!-- LEFT (UPDATED) -->
+                <FrameLayout
                     android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/profile_placeholder"
-                    android:background="@drawable/circle_background"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/profile_image_desc"/>
+                    android:layout_height="100dp">
 
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="match_parent"/>
+                    <!-- Profile Image -->
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/profile_placeholder"
+                        android:background="@drawable/circle_mask"
+                        android:clipToOutline="true"/>
 
+                    <!-- Edit Icon -->
+                    <ImageView
+                        android:id="@+id/btnEditImage"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="4dp"
+                        android:padding="4dp"
+                        android:src="@android:drawable/ic_menu_edit"
+                        android:background="@drawable/circle_bg"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                </FrameLayout>
+
+                <!-- RIGHT -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="start|center_vertical"
-                    android:layout_weight="1">
+                    android:paddingStart="16dp">
 
-                    <TextView
-                        android:id="@+id/profileName"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/inputName"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/profile_name_default"
+                        android:autofillHints=""
+                        android:hint="Name"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:background="@android:color/transparent"/>
 
-                    <TextView
-                        android:id="@+id/profileEmail"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/inputEmail"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/profile_email_default"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
+                        android:autofillHints=""
+                        android:hint="Email"
+                        android:layout_marginTop="4dp"
+                        android:background="@android:color/transparent" />
                 </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:id="@+id/infoBoxesContainer"
+        <!-- WORKOUT SPLIT -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/workout_split"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            app:cardCornerRadius="16dp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardFavoriteWorkouts"
+            <EditText
+                android:id="@+id/inputWorkoutSplit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.card.MaterialCardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+        <!-- GOALS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goals"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
 
-                    <TextView
-                        android:id="@+id/titleFavoriteWorkouts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/favorite_workouts_title"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            app:cardCornerRadius="16dp">
 
-                    <TextView
-                        android:id="@+id/contentFavoriteWorkouts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/favorite_workouts_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- PRs -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardPRs"
+            <EditText
+                android:id="@+id/inputGoals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.card.MaterialCardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+        <!-- CURRENT GYM -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Gym"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
 
-                    <TextView
-                        android:id="@+id/titlePRs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/prs_title"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            app:cardCornerRadius="16dp">
 
-                    <TextView
-                        android:id="@+id/contentPRs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/prs_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardGoals"
+            <EditText
+                android:id="@+id/inputCurrentGym"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                android:padding="16dp">
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.card.MaterialCardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
+        <!-- BODYWEIGHT -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bodyweight"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
 
-                    <TextView
-                        android:id="@+id/titleGoals"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/goals_title"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            app:cardCornerRadius="16dp">
 
-                    <TextView
-                        android:id="@+id/contentGoals"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/goals_content"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <EditText
+                android:id="@+id/inputBodyweight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
+        <!-- NATIONALITY -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nationality"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:padding="8dp"
+            app:cardCornerRadius="16dp">
+
+            <EditText
+                android:id="@+id/inputNationality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- SAVE BUTTON -->
+        <Button
+            android:id="@+id/btnSaveProfile"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Save"
+            android:textSize="16sp"
+            android:layout_marginTop="24dp"/>
 
     </LinearLayout>
 </ScrollView>

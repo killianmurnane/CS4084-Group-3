@@ -15,21 +15,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- TITLE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/progress_this_week"
+            android:text="This Week"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
 
-        <!-- Weekly stats row -->
+        <!-- WEEKLY STATS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
+            <!-- SESSIONS CARD -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.CS4084Group3.Card"
                 android:layout_width="0dp"
@@ -46,9 +48,10 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:id="@+id/tvSessions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/progress_sessions_count"
+                        android:text="0"
                         android:textAppearance="?attr/textAppearanceHeadlineMedium"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
@@ -57,12 +60,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@string/progress_sessions_label"
+                        android:text="Sessions"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- MINUTES CARD -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.CS4084Group3.Card"
                 android:layout_width="0dp"
@@ -79,9 +83,10 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:id="@+id/tvMinutes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/progress_minutes_count"
+                        android:text="0"
                         android:textAppearance="?attr/textAppearanceHeadlineMedium"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
@@ -90,19 +95,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@string/progress_minutes_label"
+                        android:text="Minutes"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Personal bests section -->
+        <!-- PERSONAL BESTS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:text="@string/progress_personal_bests"
+            android:text="Personal Bests"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
@@ -120,6 +125,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <!-- SQUAT -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -129,42 +135,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/pb_squat_label"
+                        android:text="Squat"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textColor="?attr/colorOnSurface" />
 
                     <TextView
+                        android:id="@+id/tvSquatPB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/pb_squat_value"
+                        android:text="0 kg"
                         android:textAppearance="?attr/textAppearanceTitleSmall"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/pb_bench_label"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pb_bench_value"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
+                <!-- BENCH -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -175,20 +160,126 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/pb_run_label"
+                        android:text="Bench Press"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textColor="?attr/colorOnSurface" />
 
                     <TextView
+                        android:id="@+id/tvBenchPB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/pb_run_value"
+                        android:text="0 kg"
                         android:textAppearance="?attr/textAppearanceTitleSmall"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
+
+
+                <!-- RUN -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Run"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvRunPB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 min"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textColor="?attr/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- STREAK (separate row) -->
+                <TextView
+                    android:id="@+id/tvStreak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 day streak"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:layout_marginTop="12dp"
+                    android:textStyle="bold"/>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- GOALS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Goals"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.CS4084Group3.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <EditText
+                    android:id="@+id/etGoal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter your goal (e.g. Run 5km)"
+                    android:inputType="text"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- CALORIES -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Calories"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.CS4084Group3.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <EditText
+                    android:id="@+id/etCalories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter weekly calories"
+                    android:inputType="number"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
 
     </LinearLayout>
 
