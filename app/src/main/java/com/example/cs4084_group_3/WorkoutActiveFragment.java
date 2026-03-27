@@ -140,6 +140,7 @@ public class WorkoutActiveFragment extends Fragment {
             dialog.setOnExerciseSelectedListener(exerciseName -> {
                 WorkoutExercise exercise = currentWorkout.addExercise(exerciseName);
                 addExerciseCard(exercise);
+                saveWorkout();
             });
             dialog.show(getChildFragmentManager(), "AddExerciseDialog");
         });
@@ -161,6 +162,12 @@ public class WorkoutActiveFragment extends Fragment {
         handler.removeCallbacks(timerRunnable);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveWorkout();
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void loadWorkout(String workoutName) {
@@ -168,8 +175,9 @@ public class WorkoutActiveFragment extends Fragment {
         WorkoutStore.JsonWorkoutStore store = new WorkoutStore.JsonWorkoutStore();
         ArrayList<Workout> workouts = store.getWorkouts(requireContext());
 
-        // Find the workout matching the provided name
-        for (Workout workout : workouts) {
+        // Find the most recently saved workout matching the provided name
+        for (int i = workouts.size() - 1; i >= 0; i--) {
+            Workout workout = workouts.get(i);
             if (workout.getName().equals(workoutName)) {
                 currentWorkout = workout;
                 break;
@@ -189,19 +197,60 @@ public class WorkoutActiveFragment extends Fragment {
       // ── UPDATE PROGRESS ───────────────────────────────────────────────────────────────
 
     private void updateProgress() {
+        if (currentWorkout == null) return;
+
         Progress progress = ProgressStore.readProgress(requireContext());
+        if (progress == null) {
+            progress = new Progress();
+        }
 
         progress.workoutsCompleted++;
 
-        if (currentWorkout != null) {
-            for (WorkoutExercise exercise : currentWorkout.getExercises()) {
-                progress.totalSets += exercise.getSets().size();
+        int totalSets = 0;
+        int totalReps = 0;
+        double totalVolume = 0.0;
 
-                for (ExerciseSet set : exercise.getSets()) {
-                    progress.totalVolume += set.getWeight() * set.getReps();
+        double workoutSquatPR = 0.0;
+        double workoutBenchPR = 0.0;
+        double workoutDeadliftPR = 0.0;
+
+        for (WorkoutExercise exercise : currentWorkout.getExercises()) {
+            String exerciseName = exercise.getName() == null
+                    ? ""
+                    : exercise.getName().toLowerCase(Locale.ROOT);
+
+            totalSets += exercise.getSets().size();
+
+            for (ExerciseSet set : exercise.getSets()) {
+                totalReps += set.getReps();
+                totalVolume += set.getWeight() * set.getReps();
+
+                if (exerciseName.contains("squat")) {
+                    workoutSquatPR = Math.max(workoutSquatPR, set.getWeight());
+                }
+                if (exerciseName.contains("bench")) {
+                    workoutBenchPR = Math.max(workoutBenchPR, set.getWeight());
+                }
+                if (exerciseName.contains("deadlift")) {
+                    workoutDeadliftPR = Math.max(workoutDeadliftPR, set.getWeight());
                 }
             }
         }
+
+        progress.totalSets += totalSets;
+        progress.totalReps += totalReps;
+        progress.totalVolume += totalVolume;
+
+        int elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
+        int durationMinutes = Math.round(elapsedSeconds / 60f);
+        if (durationMinutes <= 0 && currentWorkout.getDuration() > 0) {
+            durationMinutes = Math.round(currentWorkout.getDuration());
+        }
+        progress.totalMinutes += Math.max(0, durationMinutes);
+
+        if (workoutSquatPR > progress.squatPB) progress.squatPB = workoutSquatPR;
+        if (workoutBenchPR > progress.benchPB) progress.benchPB = workoutBenchPR;
+        if (workoutDeadliftPR > progress.deadliftPB) progress.deadliftPB = workoutDeadliftPR;
 
         ProgressStore.writeProgress(requireContext(), progress);
     }
@@ -232,20 +281,21 @@ public class WorkoutActiveFragment extends Fragment {
                 String weightStr = weightEdit.getText().toString().trim();
                 String repsStr = repsEdit.getText().toString().trim();
 
-                double weight = weightStr.isEmpty() ? 0 : Double.parseDouble(weightStr);
-                int reps = repsStr.isEmpty() ? 0 : Integer.parseInt(repsStr);
+                double weight = parseWeight(weightStr);
+                int reps = parseReps(repsStr);
                 exercise.addSet(weight, reps);
             }
         }
 
         WorkoutStore.JsonWorkoutStore store = new WorkoutStore.JsonWorkoutStore();
         ArrayList<Workout> workouts = store.getWorkouts(requireContext());
-        for (int i = 0; i < workouts.size(); i++) {
+
+        for (int i = workouts.size() - 1; i >= 0; i--) {
             if (workouts.get(i).getName().equals(currentWorkout.getName())) {
-                workouts.set(i, currentWorkout);
-                break;
+                workouts.remove(i);
             }
         }
+        workouts.add(currentWorkout);
         store.writeWorkouts(requireContext(), workouts);
     }
 
@@ -283,6 +333,7 @@ public class WorkoutActiveFragment extends Fragment {
             int index = exercisesContainer.indexOfChild(card);
             currentWorkout.removeExercise(index);
             exercisesContainer.removeView(card);
+            saveWorkout();
         });
 
         headerRow.addView(tvName);
@@ -297,8 +348,16 @@ public class WorkoutActiveFragment extends Fragment {
         setsParams.topMargin = dpToPx(12);
         setsContainer.setLayoutParams(setsParams);
 
-        // First set added automatically
-        addSetRow(setsContainer, 1);
+        // Restore saved sets, or create one empty set by default
+        List<ExerciseSet> savedSets = exercise.getSets();
+        if (savedSets != null && !savedSets.isEmpty()) {
+            for (int i = 0; i < savedSets.size(); i++) {
+                ExerciseSet set = savedSets.get(i);
+                addSetRow(setsContainer, i + 1, set.getWeight(), set.getReps());
+            }
+        } else {
+            addSetRow(setsContainer, 1, 0, 0);
+        }
 
         // Add Set button
         MaterialButton btnAddSet = new MaterialButton(requireContext(),
@@ -311,7 +370,8 @@ public class WorkoutActiveFragment extends Fragment {
         btnAddSet.setLayoutParams(addSetParams);
         btnAddSet.setOnClickListener(v -> {
             int nextSetNumber = setsContainer.getChildCount() + 1;
-            addSetRow(setsContainer, nextSetNumber);
+            addSetRow(setsContainer, nextSetNumber, 0, 0);
+            saveWorkout();
         });
 
         outerCol.addView(headerRow);
@@ -321,7 +381,7 @@ public class WorkoutActiveFragment extends Fragment {
         exercisesContainer.addView(card);
     }
 
-    private void addSetRow(LinearLayout setsContainer, int setNumber) {
+    private void addSetRow(LinearLayout setsContainer, int setNumber, double initialWeight, int initialReps) {
         LinearLayout row = new LinearLayout(requireContext());
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
@@ -342,6 +402,9 @@ public class WorkoutActiveFragment extends Fragment {
         EditText weightEdit = new EditText(requireContext());
         weightEdit.setHint("kg");
         weightEdit.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        if (initialWeight > 0) {
+            weightEdit.setText(String.valueOf(initialWeight));
+        }
         LinearLayout.LayoutParams weightParams = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         weightParams.setMarginStart(dpToPx(8));
@@ -350,6 +413,9 @@ public class WorkoutActiveFragment extends Fragment {
         EditText repsEdit = new EditText(requireContext());
         repsEdit.setHint("reps");
         repsEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        if (initialReps > 0) {
+            repsEdit.setText(String.valueOf(initialReps));
+        }
         LinearLayout.LayoutParams repsParams = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         repsParams.setMarginStart(dpToPx(8));
@@ -361,6 +427,7 @@ public class WorkoutActiveFragment extends Fragment {
         btnRemoveSet.setOnClickListener(v -> {
             setsContainer.removeView(row);
             renumberSets(setsContainer);
+            saveWorkout();
         });
 
         row.addView(setLabel);
@@ -368,6 +435,24 @@ public class WorkoutActiveFragment extends Fragment {
         row.addView(repsEdit);
         row.addView(btnRemoveSet);
         setsContainer.addView(row);
+    }
+
+    private double parseWeight(String value) {
+        if (value == null || value.isEmpty()) return 0;
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
+    }
+
+    private int parseReps(String value) {
+        if (value == null || value.isEmpty()) return 0;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
     }
 
     private void renumberSets(LinearLayout setsContainer) {

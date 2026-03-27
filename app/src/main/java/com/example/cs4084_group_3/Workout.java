@@ -68,6 +68,9 @@ public class Workout {
     }
 
     public List<WorkoutExercise> getExercises(){
+        if (exercises == null) {
+            exercises = new ArrayList<>();
+        }
         return exercises;
     }
 }

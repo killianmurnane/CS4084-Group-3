@@ -10,6 +10,9 @@ public class WorkoutExercise {
     private String name;
     private List<ExerciseSet> sets;
 
+    public WorkoutExercise() {
+        this.sets = new ArrayList<>();
+    }
 
     public WorkoutExercise(String name) {
         this.name = name;
@@ -46,6 +49,9 @@ public class WorkoutExercise {
     }
 
     public List<ExerciseSet> getSets() {
+        if (sets == null) {
+            sets = new ArrayList<>();
+        }
         return sets;
     }
 
