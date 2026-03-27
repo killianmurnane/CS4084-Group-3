@@ -129,6 +129,7 @@ public class WorkoutActiveFragment extends Fragment {
         btnFinish.setOnClickListener(v -> {
             isRunning = false;
             handler.removeCallbacks(timerRunnable);
+            updateProgress();
             Navigation.findNavController(v).popBackStack();
         });
     }
@@ -160,6 +161,26 @@ public class WorkoutActiveFragment extends Fragment {
         int minutes = remainingSeconds / 60;
         int seconds = remainingSeconds % 60;
         tvTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+    }
+
+    // ── UPDATE PROGRESS ───────────────────────────────────────────────────────────────
+
+    private void updateProgress() {
+        Progress progress = ProgressStore.readProgress(requireContext());
+
+        progress.workoutsCompleted++;
+
+        if (currentWorkout != null) {
+            for (WorkoutExercise exercise : currentWorkout.getExercises()) {
+                progress.totalSets += exercise.getSets().size();
+
+                for (ExerciseSet set : exercise.getSets()) {
+                    progress.totalVolume += set.getWeight() * set.getReps();
+                }
+            }
+        }
+
+        ProgressStore.writeProgress(requireContext(), progress);
     }
 
     private void buildExerciseCards(LinearLayout container, List<WorkoutExercise> exercises) {

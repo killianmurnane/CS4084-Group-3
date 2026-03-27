@@ -10,16 +10,16 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class ProfileStore {
+public class ProgressStore {
 
-    private static final String profileFileName = "profile.json";
+    private static final String progressFileName = "progress.json";
 
-    public static void writeProfile(Context context, Profile profile) {
+    public static void writeProgress(Context context, Progress progress) {
         try {
             Gson gson = new Gson();
-            String json = gson.toJson(profile);
+            String json = gson.toJson(progress);
 
-            FileOutputStream fos = context.openFileOutput(profileFileName, Context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(progressFileName, Context.MODE_PRIVATE);
             fos.write(json.getBytes(StandardCharsets.UTF_8));
             fos.close();
         } catch (Exception e) {
@@ -27,9 +27,9 @@ public class ProfileStore {
         }
     }
 
-    public static Profile readProfile(Context context) {
+    public static Progress readProgress(Context context) {
         try {
-            FileInputStream fis = context.openFileInput(profileFileName);
+            FileInputStream fis = context.openFileInput(progressFileName);
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(isr);
 
@@ -43,13 +43,17 @@ public class ProfileStore {
             isr.close();
             fis.close();
 
-            Gson gson = new Gson();
-            Profile profile = gson.fromJson(builder.toString(), Profile.class);
+            if (builder.length() == 0) {
+                return new Progress();
+            }
 
-            return profile != null ? profile : new Profile();
+            Gson gson = new Gson();
+            Progress progress = gson.fromJson(builder.toString(), Progress.class);
+
+            return (progress != null) ? progress : new Progress();
 
         } catch (Exception e) {
-            return new Profile();
+            return new Progress();
         }
     }
 }
