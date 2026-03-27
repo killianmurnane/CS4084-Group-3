@@ -36,6 +36,9 @@
     <string name="btn_resume_timer">Resume</string>
     <string name="btn_reset_timer">Reset</string>
     <string name="btn_finish_workout">Finish Workout</string>
+    <string name="btn_add_set">+ Add Set</string>
+    <string name="btn_remove_set">X</string>
+    <string name="btn_remove_exercise">Remove</string>
     <!-- Workouts page -->
     <string name="workouts_my_title">My Workouts</string>
     <string name="workout_item_one_title">Full Body Strength</string>
@@ -53,6 +56,7 @@
     <string name="btn_view">View</string>
     <string name="fab_add_workout">Add Workout</string>
     <string name="fab_add_workout_hint">Create a new workout</string>
+    <string name="btn_add_exercise">+ Add exercise</string>
     <!-- Progress page -->
     <string name="progress_this_week">This Week</string>
     <string name="progress_sessions_count">3</string>
@@ -74,6 +78,12 @@
     <string name="dialog_workout_level_label">Difficulty Level</string>
     <string name="btn_create_workout">Create Workout</string>
     <string name="btn_cancel">Cancel</string>
+    <!--Add exercise dialog -->
+    <string name="exercise_dialog_title">Add Exercise</string>
+    <string name="muscle_group_label">Muscle Group</string>
+    <string name="exercise_subhead">Exercise</string>
+    <string name="btn_add">Add</string>
+
     <string name="nationality">Nationality</string>
     <string name="workout_split">Workout Split</string>
 </resources>
