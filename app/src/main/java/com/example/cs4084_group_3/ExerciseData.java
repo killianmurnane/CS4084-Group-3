@@ -1,6 +1,7 @@
 package com.example.cs4084_group_3;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,9 @@ public class ExerciseData {
             exerciseMap.put(MuscleGroup.Core, Arrays.asList("Crunch Machine", "Leg Raises", "Crunches"));
         }
 
-        public static List<String> getExerciseGroup(MuscleGroup group){
-            return exerciseMap.get(group);
+        public static List<String> getExerciseForGroup(MuscleGroup group){
+            List<String> exercises = exerciseMap.get(group);
+            return (exercises != null) ? exercises : Collections.emptyList();
         }
 
         public static MuscleGroup[] getMuscleGroups(){
