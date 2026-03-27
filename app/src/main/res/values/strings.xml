@@ -74,4 +74,6 @@
     <string name="dialog_workout_level_label">Difficulty Level</string>
     <string name="btn_create_workout">Create Workout</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="nationality">Nationality</string>
+    <string name="workout_split">Workout Split</string>
 </resources>

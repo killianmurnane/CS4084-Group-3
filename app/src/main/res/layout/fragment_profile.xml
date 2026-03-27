@@ -13,14 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Profile Card: Image + Name/Email -->
+        <!-- PROFILE CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="24dp"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:cardCornerRadius="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,100 +28,92 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Profile Image -->
-                <ImageView
-                    android:id="@+id/profileImage"
+                <!-- LEFT (UPDATED) -->
+                <FrameLayout
                     android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/profile_placeholder"
-                    android:background="@drawable/circle_background"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/profile_image_desc"/>
+                    android:layout_height="100dp">
 
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="match_parent" />
+                    <!-- Profile Image -->
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/profile_placeholder"
+                        android:background="@drawable/circle_mask"
+                        android:clipToOutline="true"/>
 
-                <!-- Name + Email -->
+                    <!-- Edit Icon -->
+                    <ImageView
+                        android:id="@+id/btnEditImage"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="4dp"
+                        android:padding="4dp"
+                        android:src="@android:drawable/ic_menu_edit"
+                        android:background="@drawable/circle_bg"
+                        android:clickable="true"
+                        android:focusable="true"/>
+                </FrameLayout>
+
+                <!-- RIGHT -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="start|center_vertical"
-                    android:layout_weight="1">
+                    android:paddingStart="16dp">
 
-                    <TextView
-                        android:id="@+id/profileName"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/inputName"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/profile_name_default"
+                        android:autofillHints=""
+                        android:hint="Name"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:background="@android:color/transparent"/>
 
-                    <TextView
-                        android:id="@+id/profileEmail"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/inputEmail"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/profile_email_default"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp"/>
+                        android:autofillHints=""
+                        android:hint="Email"
+                        android:layout_marginTop="4dp"
+                        android:background="@android:color/transparent" />
                 </LinearLayout>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Workout Split -->
+        <!-- WORKOUT SPLIT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Workout Split"
+            android:text="@string/workout_split"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:padding="8dp"
             app:cardCornerRadius="16dp">
+
             <EditText
                 android:id="@+id/inputWorkoutSplit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- PRs -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PRs"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginBottom="4dp"/>
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:padding="8dp"
-            app:cardCornerRadius="16dp">
-            <EditText
-                android:id="@+id/inputPRs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Goals -->
+        <!-- GOALS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -129,25 +121,24 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:padding="8dp"
             app:cardCornerRadius="16dp">
+
             <EditText
                 android:id="@+id/inputGoals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Current Gym -->
+        <!-- CURRENT GYM -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -155,25 +146,24 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:padding="8dp"
             app:cardCornerRadius="16dp">
+
             <EditText
                 android:id="@+id/inputCurrentGym"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Bodyweight -->
+        <!-- BODYWEIGHT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -181,51 +171,49 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:padding="8dp"
             app:cardCornerRadius="16dp">
+
             <EditText
                 android:id="@+id/inputBodyweight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Nationality -->
+        <!-- NATIONALITY -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nationality"
+            android:text="@string/nationality"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:padding="8dp"
             app:cardCornerRadius="16dp">
+
             <EditText
                 android:id="@+id/inputNationality"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="12dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="5"
-                android:scrollHorizontally="false"/>
+                android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Save Button -->
+        <!-- SAVE BUTTON -->
         <Button
             android:id="@+id/btnSaveProfile"
             android:layout_width="match_parent"
@@ -233,5 +221,6 @@
             android:text="Save"
             android:textSize="16sp"
             android:layout_marginTop="24dp"/>
+
     </LinearLayout>
 </ScrollView>
