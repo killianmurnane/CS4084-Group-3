@@ -14,7 +14,7 @@
     <string name="feature_three_body">Build healthier habits with scheduled rest, hydration reminders, and active recovery prompts.</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
-    <string name="nav_home">Home</string>
+    <string name="nav_log">Log</string>
     <string name="nav_workouts">Workouts</string>
     <string name="nav_progress">Progress</string>
     <string name="nav_profile">Profile</string>
@@ -86,4 +86,8 @@
 
     <string name="nationality">Nationality</string>
     <string name="workout_split">Workout Split</string>
+
+
+    <string name="log_title">Workout Log</string>
+    <string name="log_empty_message">No workouts logged yet. Finish a workout to see it here.</string>
 </resources>

@@ -23,7 +23,6 @@ public class ProgressManager {
         progress.workoutsCompleted++;
         progress.totalSets += sets;
         progress.totalReps += reps;
-        progress.totalVolume += sets * reps * weight;
         progress.totalMinutes += durationMinutes;
 
         // --- DAILY TRACKING ---
