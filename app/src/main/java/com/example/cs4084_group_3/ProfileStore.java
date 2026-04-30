@@ -12,16 +12,22 @@ import java.nio.charset.StandardCharsets;
 
 public class ProfileStore {
 
-    private static final String profileFileName = "profile.json";
+    private static final String profileFilePrefix = "profile_";
+
+    private static String getProfileFileName(Context context) {
+        return profileFilePrefix + AuthStore.getCurrentUserSafeKey(context) + ".json";
+    }
 
     public static void writeProfile(Context context, Profile profile) {
         try {
             Gson gson = new Gson();
             String json = gson.toJson(profile);
 
-            FileOutputStream fos = context.openFileOutput(profileFileName, Context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(getProfileFileName(context), Context.MODE_PRIVATE);
             fos.write(json.getBytes(StandardCharsets.UTF_8));
             fos.close();
+
+            FirebaseSyncManager.syncProfile(context, profile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,7 +35,7 @@ public class ProfileStore {
 
     public static Profile readProfile(Context context) {
         try {
-            FileInputStream fis = context.openFileInput(profileFileName);
+            FileInputStream fis = context.openFileInput(getProfileFileName(context));
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(isr);
 
