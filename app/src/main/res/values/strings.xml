@@ -86,4 +86,5 @@
 
     <string name="nationality">Nationality</string>
     <string name="workout_split">Workout Split</string>
+    <string name="btn_logout">Logout</string>
 </resources>

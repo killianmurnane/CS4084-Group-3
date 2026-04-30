@@ -22,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!AuthStore.isLoggedIn(this)) {
+            startActivity(new Intent(this, AuthActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         MaterialToolbar topAppBar = findViewById(R.id.topAppBar);

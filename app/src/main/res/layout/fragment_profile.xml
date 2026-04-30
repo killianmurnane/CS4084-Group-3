@@ -222,5 +222,13 @@
             android:textSize="16sp"
             android:layout_marginTop="24dp"/>
 
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/btn_logout"
+            android:textSize="16sp"/>
+
     </LinearLayout>
 </ScrollView>
