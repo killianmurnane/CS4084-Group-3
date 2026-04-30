@@ -20,13 +20,14 @@ import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class WorkoutActiveFragment extends Fragment {
 
-    // ── Timer state ───────────────────────────────────────────────────────────
 
     private int remainingSeconds = 0;
     private int totalSeconds = 0;
@@ -34,17 +35,14 @@ public class WorkoutActiveFragment extends Fragment {
     private final Handler handler  = new Handler(Looper.getMainLooper());
     private Runnable timerRunnable;
 
-    // ── Views ─────────────────────────────────────────────────────────────────
 
     private TextView        tvTimer;
     private MaterialButton  btnStartPause;
     private LinearLayout exercisesContainer;
 
-    // ── Workout data ──────────────────────────────────────────────────────────
 
     private Workout currentWorkout;
 
-    // ── Fragment lifecycle ────────────────────────────────────────────────────
 
     @Nullable
     @Override
@@ -60,8 +58,8 @@ public class WorkoutActiveFragment extends Fragment {
 
         // Resolve workout name from navigation argument
         String workoutName = getArguments() != null
-            ? getArguments().getString("workoutName", "")
-            : "";
+                ? getArguments().getString("workoutName", "")
+                : "";
 
         // Load and find the workout from WorkoutStore
         loadWorkout(workoutName);
@@ -151,6 +149,7 @@ public class WorkoutActiveFragment extends Fragment {
             handler.removeCallbacks(timerRunnable);
             saveWorkout();
             updateProgress();
+            saveLogEntry();
             Navigation.findNavController(v).popBackStack();
         });
     }
@@ -168,7 +167,6 @@ public class WorkoutActiveFragment extends Fragment {
         saveWorkout();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void loadWorkout(String workoutName) {
         // Load all workouts from storage
@@ -193,8 +191,7 @@ public class WorkoutActiveFragment extends Fragment {
         int seconds = remainingSeconds % 60;
         tvTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
-  
-      // ── UPDATE PROGRESS ───────────────────────────────────────────────────────────────
+
 
     private void updateProgress() {
         if (currentWorkout == null) return;
@@ -208,7 +205,6 @@ public class WorkoutActiveFragment extends Fragment {
 
         int totalSets = 0;
         int totalReps = 0;
-        double totalVolume = 0.0;
 
         double workoutSquatPR = 0.0;
         double workoutBenchPR = 0.0;
@@ -223,7 +219,7 @@ public class WorkoutActiveFragment extends Fragment {
 
             for (ExerciseSet set : exercise.getSets()) {
                 totalReps += set.getReps();
-                totalVolume += set.getWeight() * set.getReps();
+
 
                 if (exerciseName.contains("squat")) {
                     workoutSquatPR = Math.max(workoutSquatPR, set.getWeight());
@@ -239,7 +235,7 @@ public class WorkoutActiveFragment extends Fragment {
 
         progress.totalSets += totalSets;
         progress.totalReps += totalReps;
-        progress.totalVolume += totalVolume;
+
 
         int elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
         int durationMinutes = Math.round(elapsedSeconds / 60f);
@@ -299,15 +295,38 @@ public class WorkoutActiveFragment extends Fragment {
         store.writeWorkouts(requireContext(), workouts);
     }
 
+    private void saveLogEntry() {
+        if (currentWorkout == null) return;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy", Locale.getDefault());
+        String date = sdf.format(new Date());
+
+        // Calculate elapsed duration in minutes
+        int elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
+        int durationMinutes = Math.round(elapsedSeconds / 60f);
+        if (durationMinutes <= 0 && currentWorkout.getDuration() > 0) {
+            durationMinutes = Math.round(currentWorkout.getDuration());
+        }
+
+
+        WorkoutLog entry = new WorkoutLog(
+                currentWorkout.getName(),
+                date,
+                durationMinutes,
+                currentWorkout.getExercises());
+
+        WorkoutLogStore.addEntry(requireContext(), entry);
+    }
+
     private void addExerciseCard(WorkoutExercise exercise) {
         MaterialCardView card = new MaterialCardView(requireContext());
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-            cardParams.topMargin = dpToPx(12);
-            card.setLayoutParams(cardParams);
-            card.setRadius(dpToPx(16));
-            card.setCardElevation(dpToPx(2));
+        cardParams.topMargin = dpToPx(12);
+        card.setLayoutParams(cardParams);
+        card.setRadius(dpToPx(16));
+        card.setCardElevation(dpToPx(2));
 
         LinearLayout outerCol = new LinearLayout(requireContext());
         outerCol.setOrientation(LinearLayout.VERTICAL);
@@ -475,3 +494,4 @@ public class WorkoutActiveFragment extends Fragment {
         return Math.round(dp * requireContext().getResources().getDisplayMetrics().density);
     }
 }
+

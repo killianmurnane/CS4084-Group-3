@@ -2,18 +2,37 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/nav_home">
+    app:startDestination="@id/nav_log">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.example.cs4084_group_3.HomeFragment"
-        android:label="Home" />
+        android:id="@+id/nav_log"
+        android:name="com.example.cs4084_group_3.LogFragment"
+        android:label="Log">
+
+        <action
+            android:id="@+id/action_log_to_logDetail"
+            app:destination="@id/logDetail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/logDetail"
+        android:name="com.example.cs4084_group_3.WorkoutLogDetailFragment"
+        android:label="Log Detail">
+
+        <argument
+            android:name="workoutName"
+            app:argType="string" />
+
+        <argument
+            android:name="workoutDate"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_workouts"
         android:name="com.example.cs4084_group_3.WorkoutsFragment"
         android:label="Workouts">
-        <!-- Add this action so WorkoutsFragment can navigate -->
+
         <action
             android:id="@+id/action_workouts_to_activeWorkout"
             app:destination="@id/activeWorkout" />
@@ -23,6 +42,7 @@
         android:id="@+id/activeWorkout"
         android:name="com.example.cs4084_group_3.WorkoutActiveFragment"
         android:label="Active Workout">
+
         <argument
             android:name="workoutName"
             app:argType="string"
@@ -38,7 +58,5 @@
         android:id="@+id/nav_profile"
         android:name="com.example.cs4084_group_3.ProfileFragment"
         android:label="Profile" />
-
-
 
 </navigation>
