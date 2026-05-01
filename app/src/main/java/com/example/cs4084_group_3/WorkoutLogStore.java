@@ -14,13 +14,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+
 public class WorkoutLogStore {
 
-    private static final String logFilePrefix = "workout_log_";
-
-    private static String getLogFileName(Context context) {
-        return logFilePrefix + AuthStore.getCurrentUserSafeKey(context) + ".json";
-    }
+    private static final String LOG_FILE_NAME = "workout_log.json";
 
     public static void addEntry(Context context, WorkoutLog entry) {
         ArrayList<WorkoutLog> entries = getEntries(context);
@@ -30,7 +27,7 @@ public class WorkoutLogStore {
 
     public static ArrayList<WorkoutLog> getEntries(Context context) {
         try {
-            FileInputStream fileInputStream = context.openFileInput(getLogFileName(context));
+            FileInputStream fileInputStream = context.openFileInput(LOG_FILE_NAME);
             InputStreamReader inputStreamReader =
                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -70,11 +67,9 @@ public class WorkoutLogStore {
             String json = gson.toJson(entries);
 
             FileOutputStream fileOutputStream =
-                    context.openFileOutput(getLogFileName(context), Context.MODE_PRIVATE);
+                    context.openFileOutput(LOG_FILE_NAME, Context.MODE_PRIVATE);
             fileOutputStream.write(json.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();
-
-            FirebaseSyncManager.syncWorkoutLogs(context, entries);
 
         } catch (IOException e) {
             e.printStackTrace();
