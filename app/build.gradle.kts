@@ -59,5 +59,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.code.gson:gson:2.12.1")
     implementation(libs.maps)
-    implementation(libs.play.services.location)
+
 }
