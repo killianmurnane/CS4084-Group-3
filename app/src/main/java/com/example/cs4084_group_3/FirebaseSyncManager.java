@@ -26,7 +26,9 @@ public class FirebaseSyncManager {
         if (!AuthStore.isLoggedIn(context)) {
             return null;
         }
+
         String userKey = AuthStore.getCurrentUserFirebaseKey(context);
+
         return FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(userKey);
@@ -35,6 +37,7 @@ public class FirebaseSyncManager {
     public static void syncProfile(Context context, Profile profile) {
         try {
             DatabaseReference userRoot = getUserRoot(context);
+
             if (userRoot == null || profile == null) {
                 Log.w(TAG, "Skipping profile sync: no logged-in user or null profile");
                 return;
@@ -49,11 +52,13 @@ public class FirebaseSyncManager {
             Map<String, Object> meta = new HashMap<>();
             meta.put("email", AuthStore.getCurrentUserEmail(context));
             meta.put("updatedAt", System.currentTimeMillis());
+
             userRoot.child("meta").updateChildren(meta, (error, ref) -> {
                 if (error != null) {
                     Log.e(TAG, "Profile meta sync failed: " + error.getMessage());
                 }
             });
+
         } catch (Exception e) {
             Log.e(TAG, "Profile sync threw exception", e);
         }
@@ -62,6 +67,7 @@ public class FirebaseSyncManager {
     public static void syncProgress(Context context, Progress progress) {
         try {
             DatabaseReference userRoot = getUserRoot(context);
+
             if (userRoot == null || progress == null) {
                 Log.w(TAG, "Skipping progress sync: no logged-in user or null progress");
                 return;
@@ -72,11 +78,13 @@ public class FirebaseSyncManager {
                     Log.e(TAG, "Progress sync failed: " + error.getMessage());
                 }
             });
+
             userRoot.child("meta").child("updatedAt").setValue(System.currentTimeMillis(), (error, ref) -> {
                 if (error != null) {
                     Log.e(TAG, "Progress meta sync failed: " + error.getMessage());
                 }
             });
+
         } catch (Exception e) {
             Log.e(TAG, "Progress sync threw exception", e);
         }
@@ -85,6 +93,7 @@ public class FirebaseSyncManager {
     public static void syncWorkouts(Context context, ArrayList<Workout> workouts) {
         try {
             DatabaseReference userRoot = getUserRoot(context);
+
             if (userRoot == null || workouts == null) {
                 Log.w(TAG, "Skipping workouts sync: no logged-in user or null workouts");
                 return;
@@ -95,13 +104,41 @@ public class FirebaseSyncManager {
                     Log.e(TAG, "Workouts sync failed: " + error.getMessage());
                 }
             });
+
             userRoot.child("meta").child("updatedAt").setValue(System.currentTimeMillis(), (error, ref) -> {
                 if (error != null) {
                     Log.e(TAG, "Workouts meta sync failed: " + error.getMessage());
                 }
             });
+
         } catch (Exception e) {
             Log.e(TAG, "Workouts sync threw exception", e);
+        }
+    }
+
+    public static void syncWorkoutLogs(Context context, ArrayList<WorkoutLog> workoutLogs) {
+        try {
+            DatabaseReference userRoot = getUserRoot(context);
+
+            if (userRoot == null || workoutLogs == null) {
+                Log.w(TAG, "Skipping workout log sync: no logged-in user or null log");
+                return;
+            }
+
+            userRoot.child("workoutLogs").setValue(workoutLogs, (error, ref) -> {
+                if (error != null) {
+                    Log.e(TAG, "Workout log sync failed: " + error.getMessage());
+                }
+            });
+
+            userRoot.child("meta").child("updatedAt").setValue(System.currentTimeMillis(), (error, ref) -> {
+                if (error != null) {
+                    Log.e(TAG, "Workout log meta sync failed: " + error.getMessage());
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e(TAG, "Workout log sync threw exception", e);
         }
     }
 
@@ -112,6 +149,7 @@ public class FirebaseSyncManager {
     public static void syncAllFromLocal(Context context, @Nullable SyncCallback callback) {
         try {
             DatabaseReference userRoot = getUserRoot(context);
+
             if (userRoot == null) {
                 if (callback != null) {
                     callback.onComplete(false, "No logged-in user session");
@@ -122,33 +160,39 @@ public class FirebaseSyncManager {
             Profile profile = ProfileStore.readProfile(context);
             Progress progress = ProgressStore.readProgress(context);
             ArrayList<Workout> workouts = new WorkoutStore.JsonWorkoutStore().getWorkouts(context);
+            ArrayList<WorkoutLog> workoutLogs = WorkoutLogStore.getEntries(context);
 
             Map<String, Object> meta = new HashMap<>();
             meta.put("email", AuthStore.getCurrentUserEmail(context));
             meta.put("updatedAt", System.currentTimeMillis());
 
-            // Use setValue per child so POJOs are serialized correctly
             userRoot.child("profile").setValue(profile);
             userRoot.child("progress").setValue(progress);
             userRoot.child("workouts").setValue(workouts);
+            userRoot.child("workoutLogs").setValue(workoutLogs);
+
             userRoot.child("meta").setValue(meta, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                     if (error != null) {
                         Log.e(TAG, "Full sync failed: " + error.getMessage());
+
                         if (callback != null) {
                             callback.onComplete(false, error.getMessage());
                         }
                     } else {
                         Log.i(TAG, "Full sync completed for user: " + AuthStore.getCurrentUserEmail(context));
+
                         if (callback != null) {
                             callback.onComplete(true, null);
                         }
                     }
                 }
             });
+
         } catch (Exception e) {
             Log.e(TAG, "Full sync threw exception", e);
+
             if (callback != null) {
                 callback.onComplete(false, e.getMessage());
             }
