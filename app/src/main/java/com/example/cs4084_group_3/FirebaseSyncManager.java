@@ -105,6 +105,30 @@ public class FirebaseSyncManager {
         }
     }
 
+    public static void syncWorkoutLog(Context context, ArrayList<WorkoutLog> entries) {
+        try {
+            DatabaseReference userRoot = getUserRoot(context);
+            if (userRoot == null || entries == null) {
+                Log.w(TAG, "Skipping workout log sync: no logged-in user or null entries");
+                return;
+            }
+
+            userRoot.child("workoutLog").setValue(entries, (error, ref) -> {
+                if (error != null) {
+                    Log.e(TAG, "Workout log sync failed: " + error.getMessage());
+                }
+            });
+            userRoot.child("meta").child("updatedAt").setValue(
+                    System.currentTimeMillis(), (error, ref) -> {
+                        if (error != null) {
+                            Log.e(TAG, "Workout log meta sync failed: " + error.getMessage());
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "Workout log sync threw exception", e);
+        }
+    }
+
     public static void syncAllFromLocal(Context context) {
         syncAllFromLocal(context, null);
     }
@@ -128,6 +152,8 @@ public class FirebaseSyncManager {
             meta.put("updatedAt", System.currentTimeMillis());
 
             // Use setValue per child so POJOs are serialized correctly
+            ArrayList<WorkoutLog> workoutLog = WorkoutLogStore.getEntries(context);
+            userRoot.child("workoutLog").setValue(workoutLog);
             userRoot.child("profile").setValue(profile);
             userRoot.child("progress").setValue(progress);
             userRoot.child("workouts").setValue(workouts);
