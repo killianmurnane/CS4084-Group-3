@@ -11,21 +11,23 @@
 
         <action
             android:id="@+id/action_log_to_logDetail"
-            app:destination="@id/logDetail" />
+            app:destination="@id/workoutLogDetail" />
     </fragment>
 
     <fragment
-        android:id="@+id/logDetail"
+        android:id="@+id/workoutLogDetail"
         android:name="com.example.cs4084_group_3.WorkoutLogDetailFragment"
-        android:label="Log Detail">
+        android:label="Workout Detail">
 
         <argument
             android:name="workoutName"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="" />
 
         <argument
             android:name="workoutDate"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
     <fragment
@@ -47,6 +49,11 @@
             android:name="workoutName"
             app:argType="string"
             android:defaultValue="Workout" />
+
+        <argument
+            android:name="isPreMade"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

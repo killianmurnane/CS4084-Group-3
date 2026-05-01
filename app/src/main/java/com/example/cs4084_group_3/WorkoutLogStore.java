@@ -17,11 +17,7 @@ import java.util.ArrayList;
 
 public class WorkoutLogStore {
 
-    private static final String LOG_FILE_PREFIX = "workout_log_";
-
-    private static String getFileName(Context context) {
-        return LOG_FILE_PREFIX + AuthStore.getCurrentUserSafeKey(context) + ".json";
-    }
+    private static final String LOG_FILE_NAME = "workout_log.json";
 
     public static void addEntry(Context context, WorkoutLog entry) {
         ArrayList<WorkoutLog> entries = getEntries(context);
@@ -31,24 +27,30 @@ public class WorkoutLogStore {
 
     public static ArrayList<WorkoutLog> getEntries(Context context) {
         try {
-            FileInputStream fis = context.openFileInput(getFileName(context));
-            InputStreamReader isr= new InputStreamReader(fis, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(isr);
+            FileInputStream fileInputStream = context.openFileInput(LOG_FILE_NAME);
+            InputStreamReader inputStreamReader =
+                    new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null)sb.append(line);
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
 
-            reader.close();
-            isr.close();
-            fis.close();
+            bufferedReader.close();
+            inputStreamReader.close();
+            fileInputStream.close();
 
-            if (sb.length() == 0) return new ArrayList<>();
-
+            if (stringBuilder.length() == 0) {
+                return new ArrayList<>();
+            }
 
             Gson gson = new Gson();
             ArrayList<WorkoutLog> entries = gson.fromJson(
-                    sb.toString(), new TypeToken<ArrayList<WorkoutLog>>() {}.getType());
+                    stringBuilder.toString(),
+                    new TypeToken<ArrayList<WorkoutLog>>() {}.getType());
+
             return entries != null ? entries : new ArrayList<>();
 
         } catch (FileNotFoundException e) {
@@ -64,13 +66,10 @@ public class WorkoutLogStore {
             Gson gson = new Gson();
             String json = gson.toJson(entries);
 
-            FileOutputStream fos =
-                    context.openFileOutput(getFileName(context), Context.MODE_PRIVATE);
-            fos.write(json.getBytes(StandardCharsets.UTF_8));
-            fos.close();
-
-            // Sync to Firebase, matching the pattern used by WorkoutStore/ProgressStore
-            FirebaseSyncManager.syncWorkoutLog(context, entries);
+            FileOutputStream fileOutputStream =
+                    context.openFileOutput(LOG_FILE_NAME, Context.MODE_PRIVATE);
+            fileOutputStream.write(json.getBytes(StandardCharsets.UTF_8));
+            fileOutputStream.close();
 
         } catch (IOException e) {
             e.printStackTrace();

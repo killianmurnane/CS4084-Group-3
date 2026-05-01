@@ -45,18 +45,12 @@
     <string name="workout_item_one_meta">45 min · 8 exercises · Intermediate</string>
     <string name="workout_item_two_title">Morning Cardio Blast</string>
     <string name="workout_item_two_meta">30 min · 6 exercises · Beginner</string>
-    <string name="workouts_browse_title">Browse Plans</string>
-    <string name="plan_strength_title">Strength Training</string>
-    <string name="plan_strength_meta">Build muscle · 3–4 days/week</string>
-    <string name="plan_cardio_title">Cardio &amp; Endurance</string>
-    <string name="plan_cardio_meta">Burn calories · 4–5 days/week</string>
-    <string name="plan_mobility_title">Mobility &amp; Flexibility</string>
-    <string name="plan_mobility_meta">Move better · 2–3 days/week</string>
     <string name="btn_start">Start</string>
     <string name="btn_view">View</string>
     <string name="fab_add_workout">Add Workout</string>
     <string name="fab_add_workout_hint">Create a new workout</string>
     <string name="btn_add_exercise">+ Add exercise</string>
+    <string name="workouts_premade_title">Try a Pre-Made Workout</string>
     <!-- Progress page -->
     <string name="progress_this_week">This Week</string>
     <string name="progress_sessions_count">3</string>
