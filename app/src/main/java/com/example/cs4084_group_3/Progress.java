@@ -8,7 +8,6 @@ public class Progress {
     public int workoutsCompleted;
     public int totalSets;
     public int totalReps;
-    public double totalVolume;
     public int totalMinutes;
 
     // Personal Bests
@@ -37,7 +36,6 @@ public class Progress {
         workoutsCompleted = 0;
         totalSets = 0;
         totalReps = 0;
-        totalVolume = 0;
         totalMinutes = 0;
 
         squatPB = 0;

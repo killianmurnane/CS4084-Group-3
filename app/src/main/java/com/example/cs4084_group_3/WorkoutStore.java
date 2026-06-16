@@ -19,16 +19,22 @@ public abstract class WorkoutStore {
     public abstract ArrayList<Workout> getWorkouts(Context context);
 
     public static class JsonWorkoutStore extends WorkoutStore {
-        private final static String workoutsFileName = "workouts.json";
+        private static final String workoutsFilePrefix = "workouts_";
+
+        private String getWorkoutsFileName(Context context) {
+            return workoutsFilePrefix + AuthStore.getCurrentUserSafeKey(context) + ".json";
+        }
 
         @Override
         public void writeWorkouts(Context context, ArrayList<Workout> values) {
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(values);
-                FileOutputStream fileOutputStream = context.openFileOutput(workoutsFileName, Context.MODE_PRIVATE);
+                FileOutputStream fileOutputStream = context.openFileOutput(getWorkoutsFileName(context), Context.MODE_PRIVATE);
                 fileOutputStream.write(json.getBytes(StandardCharsets.UTF_8));
                 fileOutputStream.close();
+
+                FirebaseSyncManager.syncWorkouts(context, values);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -37,7 +43,7 @@ public abstract class WorkoutStore {
         @Override
         public ArrayList<Workout> getWorkouts(Context context) {
             try {
-                FileInputStream fileInputStream = context.openFileInput(workoutsFileName);
+                FileInputStream fileInputStream = context.openFileInput(getWorkoutsFileName(context));
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 StringBuilder stringBuilder = new StringBuilder();

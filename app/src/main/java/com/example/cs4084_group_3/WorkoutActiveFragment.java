@@ -3,13 +3,13 @@ package com.example.cs4084_group_3;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.text.InputType;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,31 +20,30 @@ import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class WorkoutActiveFragment extends Fragment {
 
-    // ── Timer state ───────────────────────────────────────────────────────────
-
     private int remainingSeconds = 0;
     private int totalSeconds = 0;
-    private boolean isRunning   = false;
-    private final Handler handler  = new Handler(Looper.getMainLooper());
+    private boolean isRunning = false;
+
+    private boolean isPreMade = false;
+    private boolean hasWorkoutChanged = false;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable timerRunnable;
 
-    // ── Views ─────────────────────────────────────────────────────────────────
-
-    private TextView        tvTimer;
-    private MaterialButton  btnStartPause;
+    private TextView tvTimer;
+    private TextView tvWorkoutName;
+    private MaterialButton btnStartPause;
     private LinearLayout exercisesContainer;
 
-    // ── Workout data ──────────────────────────────────────────────────────────
-
     private Workout currentWorkout;
-
-    // ── Fragment lifecycle ────────────────────────────────────────────────────
 
     @Nullable
     @Override
@@ -58,49 +57,46 @@ public class WorkoutActiveFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Resolve workout name from navigation argument
         String workoutName = getArguments() != null
-            ? getArguments().getString("workoutName", "")
-            : "";
+                ? getArguments().getString("workoutName", "")
+                : "";
 
-        // Load and find the workout from WorkoutStore
+        isPreMade = getArguments() != null
+                && getArguments().getBoolean("isPreMade", false);
+
         loadWorkout(workoutName);
 
-        // Bind views
-        tvTimer          = view.findViewById(R.id.tvTimer);
-        btnStartPause    = view.findViewById(R.id.btnStartPause);
-        MaterialButton btnReset       = view.findViewById(R.id.btnReset);
-        MaterialButton btnFinish      = view.findViewById(R.id.btnFinishWorkout);
+        tvTimer = view.findViewById(R.id.tvTimer);
+        btnStartPause = view.findViewById(R.id.btnStartPause);
+        MaterialButton btnReset = view.findViewById(R.id.btnReset);
+        MaterialButton btnFinish = view.findViewById(R.id.btnFinishWorkout);
         MaterialButton btnAddExercise = view.findViewById(R.id.btnAddExercise);
-        TextView tvName               = view.findViewById(R.id.tvWorkoutName);
-        TextView tvMeta               = view.findViewById(R.id.tvWorkoutMeta);
-        TextView tvDesc               = view.findViewById(R.id.tvWorkoutDescription);
+        tvWorkoutName = view.findViewById(R.id.tvWorkoutName);
+        TextView tvMeta = view.findViewById(R.id.tvWorkoutMeta);
+        TextView tvDesc = view.findViewById(R.id.tvWorkoutDescription);
         exercisesContainer = view.findViewById(R.id.exercisesContainer);
 
-        // Populate workout info from loaded workout
         if (currentWorkout != null) {
-            tvName.setText(currentWorkout.getName());
-            tvMeta.setText(String.format("%.1f min",
-                    currentWorkout.getDuration()));
-            tvDesc.setText(currentWorkout.getDescription());
+            tvWorkoutName.setText(currentWorkout.getName());
+            tvMeta.setText(String.format(Locale.getDefault(), "%.1f min", currentWorkout.getDuration()));
 
-            // Initialize timer with workout duration (convert minutes to seconds)
+            if (currentWorkout.getDescription() != null) {
+                tvDesc.setText(currentWorkout.getDescription());
+            } else {
+                tvDesc.setText("");
+            }
+
             totalSeconds = Math.round(currentWorkout.getDuration() * 60);
             remainingSeconds = totalSeconds;
             updateTimerDisplay();
 
-
-
-
-            // Build exercise cards from the workout's exercises
             if (currentWorkout.getExercises() != null && !currentWorkout.getExercises().isEmpty()) {
-                for (WorkoutExercise exercise : currentWorkout.getExercises()){
+                for (WorkoutExercise exercise : currentWorkout.getExercises()) {
                     addExerciseCard(exercise);
                 }
             }
         }
 
-        // Timer runnable — decrements every second
         timerRunnable = new Runnable() {
             @Override
             public void run() {
@@ -112,7 +108,6 @@ public class WorkoutActiveFragment extends Fragment {
             }
         };
 
-        // Start / Pause
         btnStartPause.setOnClickListener(v -> {
             if (isRunning) {
                 isRunning = false;
@@ -125,7 +120,6 @@ public class WorkoutActiveFragment extends Fragment {
             }
         });
 
-        // Reset
         btnReset.setOnClickListener(v -> {
             isRunning = false;
             handler.removeCallbacks(timerRunnable);
@@ -134,10 +128,10 @@ public class WorkoutActiveFragment extends Fragment {
             btnStartPause.setText(R.string.btn_start_timer);
         });
 
-        //add exercise
         btnAddExercise.setOnClickListener(v -> {
             AddExerciseDialog dialog = new AddExerciseDialog();
             dialog.setOnExerciseSelectedListener(exerciseName -> {
+                hasWorkoutChanged = true;
                 WorkoutExercise exercise = currentWorkout.addExercise(exerciseName);
                 addExerciseCard(exercise);
                 saveWorkout();
@@ -145,12 +139,12 @@ public class WorkoutActiveFragment extends Fragment {
             dialog.show(getChildFragmentManager(), "AddExerciseDialog");
         });
 
-        // Finish — stop timer, save workout and go back
         btnFinish.setOnClickListener(v -> {
             isRunning = false;
             handler.removeCallbacks(timerRunnable);
             saveWorkout();
             updateProgress();
+            saveLogEntry();
             Navigation.findNavController(v).popBackStack();
         });
     }
@@ -168,14 +162,20 @@ public class WorkoutActiveFragment extends Fragment {
         saveWorkout();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     private void loadWorkout(String workoutName) {
-        // Load all workouts from storage
+        if (isPreMade) {
+            currentWorkout = PreMadeWorkout.getPreMadeWorkoutByName(workoutName);
+
+            if (currentWorkout == null) {
+                currentWorkout = new Workout(workoutName);
+            }
+
+            return;
+        }
+
         WorkoutStore.JsonWorkoutStore store = new WorkoutStore.JsonWorkoutStore();
         ArrayList<Workout> workouts = store.getWorkouts(requireContext());
 
-        // Find the most recently saved workout matching the provided name
         for (int i = workouts.size() - 1; i >= 0; i--) {
             Workout workout = workouts.get(i);
             if (workout.getName().equals(workoutName)) {
@@ -183,7 +183,8 @@ public class WorkoutActiveFragment extends Fragment {
                 break;
             }
         }
-        if(currentWorkout == null){
+
+        if (currentWorkout == null) {
             currentWorkout = new Workout(workoutName);
         }
     }
@@ -193,8 +194,6 @@ public class WorkoutActiveFragment extends Fragment {
         int seconds = remainingSeconds % 60;
         tvTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
-  
-      // ── UPDATE PROGRESS ───────────────────────────────────────────────────────────────
 
     private void updateProgress() {
         if (currentWorkout == null) return;
@@ -228,9 +227,11 @@ public class WorkoutActiveFragment extends Fragment {
                 if (exerciseName.contains("squat")) {
                     workoutSquatPR = Math.max(workoutSquatPR, set.getWeight());
                 }
+
                 if (exerciseName.contains("bench")) {
                     workoutBenchPR = Math.max(workoutBenchPR, set.getWeight());
                 }
+
                 if (exerciseName.contains("deadlift")) {
                     workoutDeadliftPR = Math.max(workoutDeadliftPR, set.getWeight());
                 }
@@ -239,13 +240,14 @@ public class WorkoutActiveFragment extends Fragment {
 
         progress.totalSets += totalSets;
         progress.totalReps += totalReps;
-        progress.totalVolume += totalVolume;
 
         int elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
         int durationMinutes = Math.round(elapsedSeconds / 60f);
+
         if (durationMinutes <= 0 && currentWorkout.getDuration() > 0) {
             durationMinutes = Math.round(currentWorkout.getDuration());
         }
+
         progress.totalMinutes += Math.max(0, durationMinutes);
 
         if (workoutSquatPR > progress.squatPB) progress.squatPB = workoutSquatPR;
@@ -255,12 +257,15 @@ public class WorkoutActiveFragment extends Fragment {
         ProgressStore.writeProgress(requireContext(), progress);
     }
 
-
     private void saveWorkout() {
         if (currentWorkout == null) return;
 
+        if (isPreMade && !hasWorkoutChanged) {
+            return;
+        }
 
         List<WorkoutExercise> exercises = currentWorkout.getExercises();
+
         for (int i = 0; i < exercises.size(); i++) {
             WorkoutExercise exercise = exercises.get(i);
             MaterialCardView card = (MaterialCardView) exercisesContainer.getChildAt(i);
@@ -270,9 +275,11 @@ public class WorkoutActiveFragment extends Fragment {
             LinearLayout setsContainer = (LinearLayout) outerCol.getChildAt(1);
 
             exercise.getSets().clear();
+
             for (int s = 0; s < setsContainer.getChildCount(); s++) {
                 View setRow = setsContainer.getChildAt(s);
                 if (!(setRow instanceof LinearLayout)) continue;
+
                 LinearLayout row = (LinearLayout) setRow;
 
                 EditText weightEdit = (EditText) row.getChildAt(1);
@@ -283,7 +290,17 @@ public class WorkoutActiveFragment extends Fragment {
 
                 double weight = parseWeight(weightStr);
                 int reps = parseReps(repsStr);
+
                 exercise.addSet(weight, reps);
+            }
+        }
+
+        if (isPreMade && hasWorkoutChanged && !currentWorkout.getName().endsWith(" Custom")) {
+            currentWorkout.setName(currentWorkout.getName() + " Custom");
+            isPreMade = false;
+
+            if (tvWorkoutName != null) {
+                tvWorkoutName.setText(currentWorkout.getName());
             }
         }
 
@@ -295,25 +312,49 @@ public class WorkoutActiveFragment extends Fragment {
                 workouts.remove(i);
             }
         }
+
         workouts.add(currentWorkout);
         store.writeWorkouts(requireContext(), workouts);
     }
 
+    private void saveLogEntry() {
+        if (currentWorkout == null) return;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy", Locale.getDefault());
+        String date = sdf.format(new Date());
+
+        int elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
+        int durationMinutes = Math.round(elapsedSeconds / 60f);
+
+        if (durationMinutes <= 0 && currentWorkout.getDuration() > 0) {
+            durationMinutes = Math.round(currentWorkout.getDuration());
+        }
+
+        WorkoutLog entry = new WorkoutLog(
+                currentWorkout.getName(),
+                date,
+                durationMinutes,
+                currentWorkout.getExercises());
+
+        WorkoutLogStore.addEntry(requireContext(), entry);
+    }
+
     private void addExerciseCard(WorkoutExercise exercise) {
         MaterialCardView card = new MaterialCardView(requireContext());
+
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-            cardParams.topMargin = dpToPx(12);
-            card.setLayoutParams(cardParams);
-            card.setRadius(dpToPx(16));
-            card.setCardElevation(dpToPx(2));
+        cardParams.topMargin = dpToPx(12);
+        card.setLayoutParams(cardParams);
+
+        card.setRadius(dpToPx(16));
+        card.setCardElevation(dpToPx(2));
 
         LinearLayout outerCol = new LinearLayout(requireContext());
         outerCol.setOrientation(LinearLayout.VERTICAL);
         outerCol.setPadding(dpToPx(16), dpToPx(16), dpToPx(16), dpToPx(16));
 
-        // Header row: name + remove button
         LinearLayout headerRow = new LinearLayout(requireContext());
         headerRow.setOrientation(LinearLayout.HORIZONTAL);
         headerRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
@@ -322,14 +363,21 @@ public class WorkoutActiveFragment extends Fragment {
         tvName.setText(exercise.getName());
         tvName.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleSmall);
         tvName.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_onSurface));
+
         LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f);
         tvName.setLayoutParams(nameParams);
 
-        MaterialButton btnRemoveExercise = new MaterialButton(requireContext(),
-                null, com.google.android.material.R.style.Widget_Material3_Button_TextButton);
+        MaterialButton btnRemoveExercise = new MaterialButton(
+                requireContext(),
+                null,
+                com.google.android.material.R.style.Widget_Material3_Button_TextButton);
         btnRemoveExercise.setText(R.string.btn_remove_exercise);
+
         btnRemoveExercise.setOnClickListener(v -> {
+            hasWorkoutChanged = true;
             int index = exercisesContainer.indexOfChild(card);
             currentWorkout.removeExercise(index);
             exercisesContainer.removeView(card);
@@ -339,17 +387,17 @@ public class WorkoutActiveFragment extends Fragment {
         headerRow.addView(tvName);
         headerRow.addView(btnRemoveExercise);
 
-        // Sets container
         LinearLayout setsContainer = new LinearLayout(requireContext());
         setsContainer.setOrientation(LinearLayout.VERTICAL);
+
         LinearLayout.LayoutParams setsParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         setsParams.topMargin = dpToPx(12);
         setsContainer.setLayoutParams(setsParams);
 
-        // Restore saved sets, or create one empty set by default
         List<ExerciseSet> savedSets = exercise.getSets();
+
         if (savedSets != null && !savedSets.isEmpty()) {
             for (int i = 0; i < savedSets.size(); i++) {
                 ExerciseSet set = savedSets.get(i);
@@ -359,15 +407,18 @@ public class WorkoutActiveFragment extends Fragment {
             addSetRow(setsContainer, 1, 0, 0);
         }
 
-        // Add Set button
-        MaterialButton btnAddSet = new MaterialButton(requireContext(),
-                null, com.google.android.material.R.style.Widget_Material3_Button_TextButton);
+        MaterialButton btnAddSet = new MaterialButton(
+                requireContext(),
+                null,
+                com.google.android.material.R.style.Widget_Material3_Button_TextButton);
         btnAddSet.setText(R.string.btn_add_set);
+
         LinearLayout.LayoutParams addSetParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         addSetParams.topMargin = dpToPx(8);
         btnAddSet.setLayoutParams(addSetParams);
+
         btnAddSet.setOnClickListener(v -> {
             int nextSetNumber = setsContainer.getChildCount() + 1;
             addSetRow(setsContainer, nextSetNumber, 0, 0);
@@ -377,6 +428,7 @@ public class WorkoutActiveFragment extends Fragment {
         outerCol.addView(headerRow);
         outerCol.addView(setsContainer);
         outerCol.addView(btnAddSet);
+
         card.addView(outerCol);
         exercisesContainer.addView(card);
     }
@@ -385,6 +437,7 @@ public class WorkoutActiveFragment extends Fragment {
         LinearLayout row = new LinearLayout(requireContext());
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -392,38 +445,51 @@ public class WorkoutActiveFragment extends Fragment {
         row.setLayoutParams(rowParams);
 
         TextView setLabel = new TextView(requireContext());
-        setLabel.setText(String.format("Set %d", setNumber));
+        setLabel.setText(String.format(Locale.getDefault(), "Set %d", setNumber));
         setLabel.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_LabelMedium);
         setLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_onSurface));
+
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
-                dpToPx(48), LinearLayout.LayoutParams.WRAP_CONTENT);
+                dpToPx(48),
+                LinearLayout.LayoutParams.WRAP_CONTENT);
         setLabel.setLayoutParams(labelParams);
 
         EditText weightEdit = new EditText(requireContext());
         weightEdit.setHint("kg");
         weightEdit.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
         if (initialWeight > 0) {
             weightEdit.setText(String.valueOf(initialWeight));
         }
+
         LinearLayout.LayoutParams weightParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f);
         weightParams.setMarginStart(dpToPx(8));
         weightEdit.setLayoutParams(weightParams);
 
         EditText repsEdit = new EditText(requireContext());
         repsEdit.setHint("reps");
         repsEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         if (initialReps > 0) {
             repsEdit.setText(String.valueOf(initialReps));
         }
+
         LinearLayout.LayoutParams repsParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f);
         repsParams.setMarginStart(dpToPx(8));
         repsEdit.setLayoutParams(repsParams);
 
-        MaterialButton btnRemoveSet = new MaterialButton(requireContext(),
-                null, com.google.android.material.R.style.Widget_Material3_Button_TextButton);
+        MaterialButton btnRemoveSet = new MaterialButton(
+                requireContext(),
+                null,
+                com.google.android.material.R.style.Widget_Material3_Button_TextButton);
         btnRemoveSet.setText(R.string.btn_remove_set);
+
         btnRemoveSet.setOnClickListener(v -> {
             setsContainer.removeView(row);
             renumberSets(setsContainer);
@@ -434,11 +500,13 @@ public class WorkoutActiveFragment extends Fragment {
         row.addView(weightEdit);
         row.addView(repsEdit);
         row.addView(btnRemoveSet);
+
         setsContainer.addView(row);
     }
 
     private double parseWeight(String value) {
         if (value == null || value.isEmpty()) return 0;
+
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException ignored) {
@@ -448,6 +516,7 @@ public class WorkoutActiveFragment extends Fragment {
 
     private int parseReps(String value) {
         if (value == null || value.isEmpty()) return 0;
+
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException ignored) {
@@ -459,16 +528,8 @@ public class WorkoutActiveFragment extends Fragment {
         for (int i = 0; i < setsContainer.getChildCount(); i++) {
             LinearLayout row = (LinearLayout) setsContainer.getChildAt(i);
             TextView label = (TextView) row.getChildAt(0);
-            label.setText(String.format("Set %d", i + 1));
+            label.setText(String.format(Locale.getDefault(), "Set %d", i + 1));
         }
-    }
-
-
-    private android.graphics.drawable.GradientDrawable createBadgeBackground() {
-        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        bg.setColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_primary));
-        return bg;
     }
 
     private int dpToPx(int dp) {

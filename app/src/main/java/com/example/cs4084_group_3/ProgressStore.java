@@ -12,16 +12,22 @@ import java.nio.charset.StandardCharsets;
 
 public class ProgressStore {
 
-    private static final String progressFileName = "progress.json";
+    private static final String progressFilePrefix = "progress_";
+
+    private static String getProgressFileName(Context context) {
+        return progressFilePrefix + AuthStore.getCurrentUserSafeKey(context) + ".json";
+    }
 
     public static void writeProgress(Context context, Progress progress) {
         try {
             Gson gson = new Gson();
             String json = gson.toJson(progress);
 
-            FileOutputStream fos = context.openFileOutput(progressFileName, Context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(getProgressFileName(context), Context.MODE_PRIVATE);
             fos.write(json.getBytes(StandardCharsets.UTF_8));
             fos.close();
+
+            FirebaseSyncManager.syncProgress(context, progress);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,7 +35,7 @@ public class ProgressStore {
 
     public static Progress readProgress(Context context) {
         try {
-            FileInputStream fis = context.openFileInput(progressFileName);
+            FileInputStream fis = context.openFileInput(getProgressFileName(context));
             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(isr);
 

@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- PROFILE CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCard"
             android:layout_width="match_parent"
@@ -28,7 +27,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- LEFT (UPDATED) -->
                 <FrameLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp">
@@ -40,10 +38,8 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:src="@drawable/profile_placeholder"
-                        android:background="@drawable/circle_mask"
                         android:clipToOutline="true"/>
 
-                    <!-- Edit Icon -->
                     <ImageView
                         android:id="@+id/btnEditImage"
                         android:layout_width="28dp"
@@ -88,7 +84,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- WORKOUT SPLIT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,7 +108,6 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- GOALS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -138,7 +132,6 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- CURRENT GYM -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -163,7 +156,6 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- BODYWEIGHT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -188,7 +180,6 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- NATIONALITY -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -213,7 +204,6 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- SAVE BUTTON -->
         <Button
             android:id="@+id/btnSaveProfile"
             android:layout_width="match_parent"
@@ -221,6 +211,14 @@
             android:text="Save"
             android:textSize="16sp"
             android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/btn_logout"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </ScrollView>

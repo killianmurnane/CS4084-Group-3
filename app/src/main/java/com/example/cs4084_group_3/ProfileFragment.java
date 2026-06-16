@@ -56,8 +56,9 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
         ImageView btnEditImage = view.findViewById(R.id.btnEditImage);
         btnSave = view.findViewById(R.id.btnSaveProfile);
+        Button btnLogout = view.findViewById(R.id.btnLogout);
 
-// Image picker (NEW)
+        // Image picker
         btnEditImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -69,8 +70,18 @@ public class ProfileFragment extends Fragment {
         loadProfileData();
 
         btnSave.setOnClickListener(v -> saveProfileData());
+        btnLogout.setOnClickListener(v -> logoutUser());
 
         return view;
+    }
+
+    private void logoutUser() {
+        AuthStore.logout(requireContext());
+
+        Intent intent = new Intent(requireContext(), AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     private void saveProfileData() {
